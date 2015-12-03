@@ -16,7 +16,9 @@
 
 
 window.findNRooksSolution = function(n) {
+
   var solution = new Board({n: n});
+
   for(var i = 0; i < n; i++){
     solution.togglePiece(i,i);
   }
@@ -31,27 +33,28 @@ window.countNRooksSolutions = function(n) {
   var solutionBoard = new Board({n: n});
   var solutionCount = 0;
 
-  var findSolution = function(potentialSolution, startColumn, row) {
+  var findSolution = function(potentialSolution, row) {
     row = row || 0;
-    // switch at the starting column
-    potentialSolution.togglePiece(row, startColumn);
-
-    // if there there is a conflict
-    if (potentialSolution.hasAnyRooksConflicts()) {
-      potentialSolution.togglePiece(row, startColumn);
-      // findSolution(potentialSolution, startColumn++ , row);
-    } else if (row === (n - 1)){
-      return solutionCount++; //increment solution count and continue with loop
-    } else {
-      for (var i = 0; i < n; i++) {
-        findSolution(potentialSolution, i, row + 1);
+    // toggle at the given position
+    for (var column = 0; column < n; column++) { // loop through from 0 to n - 1
+      potentialSolution.togglePiece(row, column); // toggle the position
+      if (!potentialSolution.hasAnyRooksConflicts()) { // if there there are no conflicts
+        if (row === n - 1) { // if this is the last row
+          solutionCount++; // increase the count
+          if (column < n - 1) { // if is this is the last row, but not the last column
+            potentialSolution.togglePiece(row, column); // toggle back so that it can continue to the next column
+          }
+        } else { // this is not the last row
+          row++; // increase row
+          findSolution(potentialSolution, row); // run findSolution
+        }
+      } else { // if there are conflicts
+        potentialSolution.togglePiece(row, column); // toggle back, continue to next column
       }
     }
   };
 
-  for (var x = 0; x < n; x++) {
-    findSolution(solutionBoard, x);
-  }
+  findSolution(solutionBoard)
 
   return solutionCount;
 };
