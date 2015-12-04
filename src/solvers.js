@@ -16,7 +16,9 @@
 
 
 window.findNRooksSolution = function(n) {
+
   var solution = new Board({n: n});
+
   for(var i = 0; i < n; i++){
     solution.togglePiece(i,i);
   }
@@ -42,6 +44,7 @@ window.countNRooksSolutions = function(n) {
     }
   };
   findSolution(solutionBoard, 0);
+
   return solutionCount;
 };
 
